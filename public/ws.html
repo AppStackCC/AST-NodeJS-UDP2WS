@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Realtime Chat using Node.js and Socket.IO</title>
+<meta name="viewport" content="initial-scale=1">
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+	<div class="box box--container">
+		<div class="box box--data">
+			<ul id="data-history"></ul>
+			<form id="data-form" action="">
+			<input type="text" id="data-message" autocomplete="off" placeholder="Enter message here..." class="box">
+			</form>
+		</div>
+	</div>
+<script src="socket.io/socket.io.js"></script>
+<script src="jquery-2.1.4.min.js"></script>
+
+<script>
+
+var socket = io();
+var dataForm = $('#data-form');
+var dataHistory = $("#data-history");
+var inputMessage = $('#data-message');
+var username = "Web";
+inputMessage.focus();
+
+socket.emit('data', {
+    username: username, 
+    message: 'Cconnected.'
+});
+
+
+dataForm.submit(function() {
+    socket.emit('data', {
+        username: username, 
+        message: inputMessage.val()
+	});
+
+    $(this)[0].reset();
+    return false;
+});
+
+
+socket.on('data', function(data) {
+    if (data.username == username) {
+        dataHistory.append($('<li class="message message--me">').text(data.message));
+	} else {
+        dataHistory.append($('<li class="message">').text(data.username + ': ' + data.message));
+	}
+    dataHistory[0].scrollTop = dataHistory[0].scrollHeight;
+});</script>
+</body>
+</html>
